@@ -11,12 +11,25 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
-  connectionTimeoutMillis: 10000,
+  connectionTimeoutMillis: 30000,
+  idleTimeoutMillis: 30000,
+  max: 20,
+});
+
+// Test connection
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
 });
 
 const initDB = async () => {
-  try {
-    await pool.query(`
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      // Test connection first
+      await pool.query('SELECT NOW()');
+      console.log('Database connection established successfully.');
+
+      await pool.query(`
             CREATE TABLE IF NOT EXISTS Users (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
@@ -50,11 +63,20 @@ const initDB = async () => {
                     );
                     `);
     console.log("Database initialized successfully.");
+    return; // Success, exit the function
   }
    catch (error) {
-    console.error(" Database initialization failed:");
+    retries--;
+    console.error(` Database initialization failed. Retries left: ${retries}`);
     console.error(error);
-    console.error("Server will continue running, but DB operations will fail.");
+    
+    if (retries === 0) {
+      console.error("Server will continue running, but DB operations will fail.");
+    } else {
+      console.log("Retrying in 5 seconds...");
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+  }
   }
 };
 export { initDB, pool };

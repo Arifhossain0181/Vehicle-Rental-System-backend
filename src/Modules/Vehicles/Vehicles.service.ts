@@ -2,7 +2,7 @@ import { pool } from "../../config/db";
 
 const createVehicles = async (payload: Record<string, any>) => {
   const {
-    id,
+   
     vehicle_name,
     type,
     registration_number,
@@ -11,12 +11,12 @@ const createVehicles = async (payload: Record<string, any>) => {
   } = payload;
   const result = await pool.query(
     `
-        INSERT INTO Vehicles (id,vehicle_name,type,registration_number,daily_rent_price,availability_status)
-        VALUES($1,$2,$3,$4,$5,$6)
+        INSERT INTO Vehicles (vehicle_name,type,registration_number,daily_rent_price,availability_status)
+        VALUES($1,$2,$3,$4,$5)
         RETURNING *;
     `,
     [
-      id,
+     
       vehicle_name,
       type,
       registration_number,
@@ -30,13 +30,23 @@ const createVehicles = async (payload: Record<string, any>) => {
 const getAllVehicles = async () => {
   const result = await pool.query(`
         
-        SELECT * FROM Vehicles RETURNING *
+        SELECT * FROM Vehicles ORDER BY id;
     `);
   return result.rows;
 };
-const UPdateVehicles = async (payload: Record<string, any>) => {
+const getAllVehiclesId = async (id: Number)=>{
+  const result = await pool.query(`
+    SELECT * FROM Vehicles WHERE id= $1;
+    
+    `,[id])
+    if(result.rowCount === 0){
+      console.log("vehicle not found")
+    }    
+  return result.rows[0];
+}
+const UPdateVehicles = async (id: string, payload: Record<string, any>) => {
   const {
-    id,
+    
     vehicle_name,
     type,
     registration_number,
@@ -46,17 +56,17 @@ const UPdateVehicles = async (payload: Record<string, any>) => {
   const result = await pool.query(
     `
         UPDATE Vehicles
-        SET vehicle_name=$2, type=$3, registration_number=$4, daily_rent_price=$5, availability_status=$6
-        WHERE id=$1
+        SET vehicle_name=$1, type=$2, registration_number=$3, daily_rent_price=$4, availability_status=$5
+        WHERE id=$6
         RETURNING *;
     `,
     [
-      id,
       vehicle_name,
       type,
       registration_number,
       daily_rent_price,
       availability_status,
+      id
     ]
   );
 
@@ -73,5 +83,6 @@ export const VehiclesService = {
   createVehicles,
   getAllVehicles,
   UPdateVehicles,
-  deleteVehicles
+  deleteVehicles,
+  getAllVehiclesId
 };
