@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { pool } from '../../config/db';
 import bcrypt from 'bcrypt';
 
+
 ;
  export const AuthService = {
     signup: async (payload: any) =>{
@@ -9,7 +10,7 @@ import bcrypt from 'bcrypt';
         const hashedPassword = await bcrypt.hash(password,10);
         const result = await pool.query(`
             INSERT INTO Users (name,email,password,phone,role) VALUES ($1,$2,$3,$4,$5) RETURNING id,name,email,role`,
-        [name ,email, hashedPassword,phone,role])
+        [name ,email.toLowerCase(), hashedPassword,phone,role])
         return result.rows[0];
     },
 
@@ -25,7 +26,10 @@ import bcrypt from 'bcrypt';
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
             console.log("Invalid Password");
-        }    
+        }  
+        if(!process.env.JWT_SECRET){
+            console.log("JWT_SECRET is not defined in environment variables");
+        }  
 
         const token = jwt.sign({
             id:user.id,
@@ -37,8 +41,8 @@ import bcrypt from 'bcrypt';
         }
         
     )
-    console.log('✅ Token generated successfully for user:', user.email);
-    console.log('🔑 Token:', token);
+    console.log(' Token generated successfully for user:', user.email);
+    console.log(' Token:', token);
     return {
         token,
         user:{

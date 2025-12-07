@@ -44,7 +44,7 @@ const getAllVehiclesId = async (id: Number)=>{
     }    
   return result.rows[0];
 }
-const UPdateVehicles = async (id: string, payload: Record<string, any>) => {
+const UPdateVehicles = async (id: number, payload: Record<string, any>) => {
   const {
     
     vehicle_name,

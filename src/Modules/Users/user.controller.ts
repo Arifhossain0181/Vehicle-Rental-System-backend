@@ -21,22 +21,22 @@ const  getAllUsers = async (req:Request,res:Response) => {
 
 const Updateuser = async (req:Request,res:Response) => {
     try{
-        const target = req.params.usreId
+        const userId = req.params.usreId
         const loggedin = (req as any).user;
-        const {id} = req.params
-        if(loggedin.role ==='customer' && loggedin.id !== target){
+    
+        if(loggedin.role ==='customer' && loggedin.id !== userId){
             return res.status(403).json({
                 message:"forbidden ,you can update only your account",
                 success:false
             })
         }
-        if(loggedin.role ==='admin' && loggedin.id === target){
+        if(loggedin.role ==='admin' && loggedin.id === userId){
             return res.status(403).json({
                 message:"forbidden ,admin cant update his account",
                 success:false
             })
         }
-       const result = await userservice.Updateuser(target as string ,req.body)
+       const result = await userservice.Updateuser(userId as string ,req.body)
         res.status(200).json({
             message:true,
             success:true,
@@ -57,12 +57,17 @@ const deleteuser = async (req:Request,res:Response) => {
         const {id} = req.params;
         const result = await userservice.deletuser(id as string);
         res.status(200).json({
-            message:true,
+            message:"user deleted",
             success:true,
             data:result
         });
     }
-    catch (error) {
+    catch (error:any) {
+        if(error.message ==='active bookings'){
+            return res.status(400).json({
+                message:"cannot delete user with active bookings",
+                success:false,  })
+        }
         res.status(500).json
         ({message:false,
             success:false,
@@ -75,6 +80,7 @@ const deleteuser = async (req:Request,res:Response) => {
 export const usercontroller = {
     getAllUsers,
     Updateuser,
-    deleteuser
+    deleteuser,
+  
 }
 

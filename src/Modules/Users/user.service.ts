@@ -23,7 +23,7 @@ const Updateuser = async (
         values.push(updatedData.name);}
      if(updatedData.email){
         fileds.push(`eamil = $${fileds.length +1}`)
-        values.push(updatedData.email)
+        values.push(updatedData.email.toLowerCase())
      }   
      if(updatedData.phone){
         fileds.push(`Phone = $${fileds.length +1} `)
@@ -52,9 +52,14 @@ const Updateuser = async (
 }
 
 const deletuser = async (id: string) => {
+  const activeBookings = await pool.query(`
+    SELECT id FROM Bookings WHERE customer_id = $1 AND status = 'active'`, [id] )
+    if(activeBookings.rowCount ===0){
+    return {success:false,status:400}
+    }
   const result = await pool.query(
     `
-        DELETE FROM Users WHERE id=$1 RETURNING *;
+        DELETE FROM Users WHERE id=$1 RETURNING id,name,email,phone, role;
     `,
     [id]
   );
