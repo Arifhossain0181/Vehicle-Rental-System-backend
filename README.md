@@ -1,7 +1,7 @@
 Vehicle rental system backend APi
 Node.js ,ExPress ,TypeScript, PostgreSQL
 
-
+LIVEURL:https://solution2-pi.vercel.app/
 
 Github:https://github.com/Arifhossain0181/Vehicle-Rental-System-backend
 
@@ -19,5 +19,8 @@ Auth:JWT,bcryPt
 TOOls:TypeScript compiler, ESBuild
 
 Install dependencies:
-nnpm install
+npm install
+pm init -y
+npm install pg
+npm install bcrypt
 
