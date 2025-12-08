@@ -5,8 +5,8 @@ import { authowner } from '../../Middleware/auth'
 
 const router = express.Router();
 
-router.get('/',auth(),authAdmin,usercontroller.getAllUsers)
-router.put('/:userId',auth(),authowner,usercontroller.Updateuser)
-router.delete('/:userId',auth(),authAdmin,usercontroller.deleteuser)
+router.get('/',auth("admin"),authAdmin,usercontroller.getAllUsers)
+router.put('/:userId',auth("admin","customer"),authowner,usercontroller.Updateuser)
+router.delete('/:userId',auth("admin"),authAdmin,usercontroller.deleteuser)
 
 export const userrouter = router;
