@@ -24,9 +24,9 @@ if (!process.env.JWT_SECRET) {
             const token = req.headers.authorization;
             if(!token){
                 console.log(' No token provided in Authorization header');
-                return res.status(401).json({message:"Unauthorized",
-                    success:false,
-                    error:"no token provided"
+                return res.status(401).json({message: "Unauthorized access. Please log in.",
+                   
+                   
                 })
             }
             const [tokenParts ,tokens] = token.split(" ")

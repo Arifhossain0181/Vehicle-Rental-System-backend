@@ -10,7 +10,7 @@ const Updateuser = async (
      usreId: string,
      updatedData:{
         name?:string,
-        email?:string,
+       email?:string,
          password?:string,
         phone?:string,
         role?:string
@@ -21,18 +21,19 @@ const Updateuser = async (
     if(updatedData.name){
         fileds.push(`name= $${fileds.length +1}`);
         values.push(updatedData.name);}
+        
      if(updatedData.email){
-        fileds.push(`eamil = $${fileds.length +1}`)
+        fileds.push(`email = $${fileds.length +1}`)
         values.push(updatedData.email.toLowerCase())
      }   
      if(updatedData.phone){
-        fileds.push(`Phone = $${fileds.length +1} `)
+        fileds.push(`phone = $${fileds.length +1} `)
         values.push(updatedData.phone)
      }
     
     if(updatedData.password){
         updatedData.password = await bcrypt.hash(updatedData.password,10)
-        fileds.push(`Password = $${fileds.length +1}` )
+        fileds.push(`password = $${fileds.length +1}` )
         values.push(updatedData.password)
 
     }

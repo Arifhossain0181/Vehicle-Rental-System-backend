@@ -21,16 +21,16 @@ const  getAllUsers = async (req:Request,res:Response) => {
 
 const Updateuser = async (req:Request,res:Response) => {
     try{
-        const userId = req.params.usreId
+        const userId = req.params.userId
         const loggedin = (req as any).user;
     
-        if(loggedin.role ==='customer' && loggedin.id !== userId){
+        if(loggedin.role ==='customer' && loggedin.id != userId){
             return res.status(403).json({
                 message:"forbidden ,you can update only your account",
                 success:false
             })
         }
-        if(loggedin.role ==='admin' && loggedin.id === userId){
+        if(loggedin.role ==='admin' && loggedin.id == userId){
             return res.status(403).json({
                 message:"forbidden ,admin cant update his account",
                 success:false
